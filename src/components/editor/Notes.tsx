@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { setNote } from "@/app/redux/contentSlice";
@@ -7,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { toast } from "sonner";
 const Notes = () => {
-    // const [data, setData] = useState<{ content: string }[]>([]);
     const dispatch = useDispatch();
     const content = useSelector((state: RootState) => state.content.content) as unknown as { content: string }[] || [];
 
@@ -20,9 +20,6 @@ const Notes = () => {
             console.log("response: ", { response });
             const result = await response.json();
             if (response.ok) {
-
-                console.log("result: ", { result });
-                // setData([...result.data]);
                 dispatch(setNote(result.data));
 
             } else {
