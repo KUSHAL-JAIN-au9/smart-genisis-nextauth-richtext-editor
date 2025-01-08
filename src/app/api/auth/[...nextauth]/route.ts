@@ -76,6 +76,7 @@ const handler = NextAuth({
           image: token.picture,
         };
       }
+
       return session;
     },
   },
