@@ -1,0 +1,1 @@
+# smart-genisis-nextauth-RichtextEditor
