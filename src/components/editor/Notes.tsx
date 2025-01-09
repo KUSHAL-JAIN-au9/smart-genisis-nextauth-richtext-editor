@@ -3,11 +3,16 @@
 
 import { setNote } from "@/app/redux/contentSlice";
 import { RootState } from "@/app/redux/store";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, Dispatch, SetStateAction } from "react";
+import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { toast } from "sonner";
-const Notes = () => {
+
+interface NotesProps {
+    setEditItem: Dispatch<SetStateAction<{ content: string } | null>>;
+}
+const Notes: React.FC<NotesProps> = ({ setEditItem }) => {
     const dispatch = useDispatch();
     const content = useSelector((state: RootState) => state.content.content) as unknown as { content: string }[] || [];
 
@@ -43,11 +48,18 @@ const Notes = () => {
                 <Masonry gutter="20px">
                     {content?.map((item: { content: string }, idx: number) => (
                         <div key={idx} style={{ color: colors[idx % colors.length] }}>
-                            <div
-                                className="px-4 py-3 font-bold text-slate-950"
-                                style={{ backgroundColor: colors[idx % colors.length] }}
-                            >
-                                Note - {idx + 1}
+                            <div className="flex flex-row justify-between  items-center"
+                                style={{ backgroundColor: colors[idx % colors.length] }}>
+                                <div
+                                    className="px-4 py-3 font-bold text-slate-950"
+
+                                >
+                                    Note - {idx + 1}
+                                </div>
+                                <FaEdit
+                                    className="text-black mr-1"
+                                    onClick={() => setEditItem(item)}
+                                />
                             </div>
                             <div
                                 className="ProseMirror whitespace-pre-line border border-slate-700 px-6 py-4 rounded-lg"

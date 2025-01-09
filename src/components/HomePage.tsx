@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import Todo from "./editor/NotePicker"
 import Notes from "./editor/Notes"
 import UserButton from "./user-button"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 const HomePage = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
+
+    const [editItem, setEditItem] = useState<{ content: string } | null>(null);
+
 
     useEffect(() => {
         if (status === 'unauthenticated' || session === null) {
@@ -24,8 +27,8 @@ const HomePage = () => {
     return (
         <>
             <UserButton />
-            <Todo />
-            <Notes />
+            <Todo editItem={editItem} />
+            <Notes setEditItem={setEditItem} />
         </>
     )
 }

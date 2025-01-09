@@ -12,6 +12,9 @@ async function connectToDatabase() {
   }
   const opts = {
     bufferCommands: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    connectTimeoutMS: 30000, // 30 seconds
   };
   await mongoose.connect(MONGODB_URI!, opts);
   return mongoose;

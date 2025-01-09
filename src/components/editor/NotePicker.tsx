@@ -8,7 +8,12 @@ import { RootState } from '@/app/redux/store'
 import { setNote } from '@/app/redux/contentSlice';
 import { useToast } from '@/hooks/use-toast'
 
-const Todo = () => {
+interface TodoProps {
+
+    editItem: { content: string } | null;
+
+}
+const Todo: React.FC<TodoProps> = ({ editItem }) => {
     const [content, setContent] = useState<string>('')
     const dispatch = useDispatch();
     const noteContent = useSelector((state: RootState) => state.content.content);
@@ -19,6 +24,13 @@ const Todo = () => {
     }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        if (editItem) {
+            return toast({
+                variant: "destructive",
+                title: "update notes functionality not implemented yet",
+            })
+        }
 
         const cleanedContent = content.replace(/<[^>]*>/g, "").trim();
         if (!cleanedContent) {
