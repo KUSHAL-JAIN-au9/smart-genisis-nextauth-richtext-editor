@@ -103,6 +103,8 @@ const SignUp = () => {
                             type="password"
                             disabled={pending}
                             placeholder="password"
+                            pattern="^(?=.*[A-Z])(?=.*[a-zA-Z]{2,})(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                            title="Password must be at least 8 characters long, contain at least one uppercase letter, two alphabets, one number, and one special character."
                             value={form.password}
                             onChange={(e) => setForm({ ...form, password: e.target.value })}
                             required

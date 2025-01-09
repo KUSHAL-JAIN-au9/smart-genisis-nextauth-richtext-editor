@@ -1,18 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ContentState {
-  content: string[];
+  content: { content: string; _id: string }[];
 }
 
 const initialState: ContentState = {
-  content: [],
+  content: [] as { content: string; _id: string }[],
 };
 
 const contentSlice = createSlice({
   name: "content",
   initialState,
   reducers: {
-    setNote: (state, action: PayloadAction<string[]>) => {
+    setNote: (
+      state,
+      action: PayloadAction<{ content: string; _id: string }[]>
+    ) => {
       console.log("action.payload", action.payload);
       state.content = [...action.payload];
     },

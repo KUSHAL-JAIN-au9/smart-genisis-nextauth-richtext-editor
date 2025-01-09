@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import Tiptap from './TipTap'
 import { toast as toaster } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,15 +9,21 @@ import { setNote } from '@/app/redux/contentSlice';
 import { useToast } from '@/hooks/use-toast'
 
 interface TodoProps {
-
-    editItem: { content: string } | null;
+    editItem: { content: string, _id: string } | null;
+    setEditItem: Dispatch<SetStateAction<{ content: string, _id: string } | null>>;
 
 }
-const Todo: React.FC<TodoProps> = ({ editItem }) => {
+const Todo: React.FC<TodoProps> = ({ editItem, setEditItem }) => {
     const [content, setContent] = useState<string>('')
     const dispatch = useDispatch();
     const noteContent = useSelector((state: RootState) => state.content.content);
     const { toast } = useToast()
+
+    useEffect(() => {
+        if (editItem) {
+            setContent(editItem.content);
+        }
+    }, [editItem]);
 
     const handleContentChange = (reason: string) => {
         setContent(reason)
@@ -26,10 +32,40 @@ const Todo: React.FC<TodoProps> = ({ editItem }) => {
         e.preventDefault()
 
         if (editItem) {
-            return toast({
-                variant: "destructive",
-                title: "update notes functionality not implemented yet",
-            })
+            // Call PUT API to update content
+
+            try {
+                const res = await fetch(`/api/auth/content`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, id: editItem?._id }),
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    toaster.success('Note updated successfully');
+                    console.log("result put", result);
+                    // Update the content in the Redux store
+                    const updatedContent = noteContent.map((item: { content: string, _id: string }) =>
+                        item._id === editItem._id ? { ...item, content } : item
+                    );
+
+                    dispatch(setNote(updatedContent));
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: result?.message,
+                    })
+                }
+
+            } catch (error) {
+                toast({
+                    variant: "destructive",
+                    title: "something went wrong",
+                })
+                console.error('Error updating note:', error);
+            }
+            return setEditItem(null)
         }
 
         const cleanedContent = content.replace(/<[^>]*>/g, "").trim();
@@ -47,8 +83,7 @@ const Todo: React.FC<TodoProps> = ({ editItem }) => {
             body: JSON.stringify({ content }),
         });
         const result = await res.json();
-        const updatedResult: string[] = [...noteContent, result.data]
-        console.log("submit data", updatedResult, cleanedContent)
+        const updatedResult: { content: string; _id: string }[] = [...noteContent, result.data]
 
         if (res.ok) {
             toaster.success(result.message);
@@ -63,7 +98,7 @@ const Todo: React.FC<TodoProps> = ({ editItem }) => {
 
         }
 
-
+        setEditItem(null)
     }
     return (
         <form

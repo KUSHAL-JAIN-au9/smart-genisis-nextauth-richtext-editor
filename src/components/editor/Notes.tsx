@@ -3,6 +3,9 @@
 
 import { setNote } from "@/app/redux/contentSlice";
 import { RootState } from "@/app/redux/store";
+import Underline from "@tiptap/extension-underline";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import React, { useCallback, useEffect, Dispatch, SetStateAction } from "react";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,13 +13,12 @@ import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { toast } from "sonner";
 
 interface NotesProps {
-    setEditItem: Dispatch<SetStateAction<{ content: string } | null>>;
+    setEditItem: Dispatch<SetStateAction<{ content: string, _id: string } | null>>;
 }
 const Notes: React.FC<NotesProps> = ({ setEditItem }) => {
     const dispatch = useDispatch();
-    const content = useSelector((state: RootState) => state.content.content) as unknown as { content: string }[] || [];
+    const content = useSelector((state: RootState) => state.content.content) as unknown as { content: string, _id: string }[] || [];
 
-    console.log("noteContent mount", content);
     const colors = ["#ffcccc", "#ccffcc", "#ccccff", "#ffffcc", "#ffccff"];
 
     const fetchContent = useCallback(async () => {
@@ -36,6 +38,24 @@ const Notes: React.FC<NotesProps> = ({ setEditItem }) => {
         }
     }, []);
 
+    const editor = useEditor({
+        extensions: [StarterKit, Underline],
+        editorProps: {
+            attributes: {
+                class:
+                    "flex flex-col px-4 py-3 justify-start border-b border-r border-l border-gray-700 text-gray-400 items-start w-full gap-3 font-medium text-[16px] pt-4 rounded-bl-md rounded-br-md outline-none",
+            },
+        },
+        onUpdate: ({ editor }) => {
+            console.log("editor content", editor.getHTML());
+        },
+
+    });
+
+    console.log(editor, "editor");
+
+
+
 
     useEffect(() => {
         fetchContent();
@@ -46,7 +66,7 @@ const Notes: React.FC<NotesProps> = ({ setEditItem }) => {
         <div className="max-w-6xl mx-auto px-5">
             <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 750: 2, 1024: 3 }}>
                 <Masonry gutter="20px">
-                    {content?.map((item: { content: string }, idx: number) => (
+                    {content?.map((item: { content: string, _id: string }, idx: number) => (
                         <div key={idx} style={{ color: colors[idx % colors.length] }}>
                             <div className="flex flex-row justify-between  items-center"
                                 style={{ backgroundColor: colors[idx % colors.length] }}>
@@ -57,8 +77,12 @@ const Notes: React.FC<NotesProps> = ({ setEditItem }) => {
                                     Note - {idx + 1}
                                 </div>
                                 <FaEdit
-                                    className="text-black mr-1"
-                                    onClick={() => setEditItem(item)}
+                                    className="text-black mr-1 cursor-pointer"
+                                    onClick={() => {
+                                        setEditItem(item)
+                                        console.log("edit item", item);
+                                        editor?.commands.setContent(item?.content);
+                                    }}
                                 />
                             </div>
                             <div

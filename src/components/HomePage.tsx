@@ -11,7 +11,7 @@ const HomePage = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
 
-    const [editItem, setEditItem] = useState<{ content: string } | null>(null);
+    const [editItem, setEditItem] = useState<{ content: string, _id: string } | null>(null);
 
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const HomePage = () => {
     return (
         <>
             <UserButton />
-            <Todo editItem={editItem} />
+            <Todo editItem={editItem} setEditItem={setEditItem} />
             <Notes setEditItem={setEditItem} />
         </>
     )

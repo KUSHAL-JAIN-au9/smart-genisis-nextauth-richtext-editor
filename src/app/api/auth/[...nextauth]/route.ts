@@ -6,6 +6,17 @@ import Github from "next-auth/providers/github";
 import User from "@/models/user";
 import GoogleProvider from "next-auth/providers/google";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      image: string;
+    };
+  }
+}
+
 const handler = NextAuth({
   session: {
     strategy: "jwt",
@@ -39,7 +50,12 @@ const handler = NextAuth({
           if (!isValidPassword) {
             throw new Error("");
           }
-          return user;
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          };
         } catch {
           return null;
         }
@@ -71,9 +87,10 @@ const handler = NextAuth({
     async session({ session, token }) {
       if (token) {
         session.user = {
-          email: token.email,
-          name: token.name,
-          image: token.picture,
+          email: token.email as string,
+          name: token.name as string,
+          image: token.picture as string,
+          id: token.id as string,
         };
       }
 

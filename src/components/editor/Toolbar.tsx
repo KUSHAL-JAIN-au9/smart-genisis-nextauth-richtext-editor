@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { type Editor } from "@tiptap/react";
 import {
     Bold,
@@ -22,11 +22,19 @@ type Props = {
 };
 
 const Toolbar = ({ editor, content }: Props) => {
+    useEffect(() => {
+        if (editor && content) {
+            // editor.commands.focus();
+            editor.commands.setContent(content);
+
+        }
+    }, [editor, content])
+
     if (!editor) {
         return null;
     }
 
-    console.log("content: ", content, editor);
+    console.log("================================content 2=====================", content);
     return (
         <div
             className="px-4 py-3 rounded-tl-md rounded-tr-md flex justify-between items-start
@@ -183,7 +191,7 @@ const Toolbar = ({ editor, content }: Props) => {
                     type="submit"
                     onClick={() => {
                         if (editor) {
-                            editor.commands.setContent('');
+                            editor.commands.clearContent();
                         }
                     }}
                     className="px-4 bg-sky-700 text-white py-2 rounded-md"

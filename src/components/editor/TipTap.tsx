@@ -24,7 +24,7 @@ const Tiptap = ({ onChange, content }: { onChange: (newContent: string) => void;
     });
 
 
-
+    console.log("================================content =====================", content);
     return (
         <div className="w-full px-4">
             <Toolbar editor={editor} content={content} />
