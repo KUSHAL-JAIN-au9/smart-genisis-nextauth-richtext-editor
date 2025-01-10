@@ -15,13 +15,17 @@ const HomePage = () => {
 
 
     useEffect(() => {
+        if (status === 'loading') {
+            // Do nothing while loading
+            return;
+        }
         if (status === 'unauthenticated' || session === null) {
-
+            console.log("login", status, session);
             router.push("/sign-in")
         }
     }, [status, session, router]);
 
-    if (!session) {
+    if (status === 'loading' || !session) {
         return <div className="h-screen flex  justify-center items-center"> <Loader className="size-6 mr-4 mt-4 float-right animate-spin text-white" /> </div>;
     }
     return (

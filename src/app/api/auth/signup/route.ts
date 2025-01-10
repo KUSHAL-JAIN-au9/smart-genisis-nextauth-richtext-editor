@@ -31,7 +31,10 @@ export async function POST(request: Request) {
   }
   if (password.length < 6) {
     return NextResponse.json(
-      { message: "Password must be at least 6 character long" },
+      {
+        message:
+          "Password must be at least 8 characters long, contain at least one uppercase letter, two alphabets, one number, and one special character.",
+      },
       { status: 400 }
     );
   }

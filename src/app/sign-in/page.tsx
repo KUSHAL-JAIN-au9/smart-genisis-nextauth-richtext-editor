@@ -40,13 +40,13 @@ const SignIn = () => {
             password,
         });
         if (res?.ok) {
-            router.push("/");
-            toast.success("login successful");
+            router.push("/")
+            toast.success("login successful")
         } else if (res?.status === 401) {
-            setError("Invalid Credentials");
+            setError("Invalid Credentials")
             setPending(false);
         } else {
-            setError("Something went wrong");
+            setError("Something went wrong")
         }
     };
 
