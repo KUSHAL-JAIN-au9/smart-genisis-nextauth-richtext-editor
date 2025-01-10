@@ -65,6 +65,7 @@ const Todo: React.FC<TodoProps> = ({ editItem, setEditItem }) => {
                 })
                 console.error('Error updating note:', error);
             }
+            setContent('')
             return setEditItem(null)
         }
 
@@ -99,6 +100,7 @@ const Todo: React.FC<TodoProps> = ({ editItem, setEditItem }) => {
         }
 
         setEditItem(null)
+        setContent('')
     }
     return (
         <form

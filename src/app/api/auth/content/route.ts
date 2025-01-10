@@ -31,7 +31,14 @@ export async function POST(request: Request) {
 
   const newContent = new Content({ content, user: userData?._id });
   await newContent.save();
-  console.log("content", newContent);
+  // Push the new content ID into the user's contents array
+  if (userData) {
+    userData.contents.push(newContent?.id);
+    await userData.save();
+  }
+
+  // Populate the user object in the new content
+  await newContent.populate("user");
 
   return NextResponse.json(
     { message: "Note added sucessfully", data: newContent },
@@ -54,14 +61,18 @@ export async function GET(request: Request) {
   }
 
   // Fetch the user ID using the email from the session
-  const user = await User.findOne({ email: session?.user?.email });
-
+  const user = await User.findOne({ email: session?.user?.email })
+    .populate("contents")
+    .exec();
+  console.log("Fetching user data", user, !user, session);
   if (!user) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  const contents = await Content.find({ user: user._id }).populate("user");
-  console.log("Fetching user", user, contents);
+  const contents = await Content.find({ user: user._id })
+    .populate("user")
+    .exec();
+
   if (!contents?.length) {
     return NextResponse.json(
       { message: "No content found", data: [] },
