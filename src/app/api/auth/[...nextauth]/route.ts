@@ -1,12 +1,12 @@
-import NextAuth from "next-auth";
-import connectToDatabase from "@/lib/mongodb";
-import bcrypt from "bcryptjs";
-import CredentialsProvider from "next-auth/providers/credentials";
-import Github from "next-auth/providers/github";
-import User from "@/models/user";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from 'next-auth';
+import connectToDatabase from '@/lib/mongodb';
+import bcrypt from 'bcryptjs';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import Github from 'next-auth/providers/github';
+import User from '@/models/user';
+import GoogleProvider from 'next-auth/providers/google';
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
@@ -19,7 +19,7 @@ declare module "next-auth" {
 
 const handler = NextAuth({
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   providers: [
     Github({
@@ -31,7 +31,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         email: {},
         password: {},
@@ -41,14 +41,14 @@ const handler = NextAuth({
           await connectToDatabase();
           const user = await User.findOne({ email: credentials?.email });
           if (!user) {
-            throw new Error("");
+            throw new Error('');
           }
           const isValidPassword = await bcrypt.compare(
-            credentials?.password ?? "",
+            credentials?.password ?? '',
             user.password as string
           );
           if (!isValidPassword) {
-            throw new Error("");
+            throw new Error('');
           }
           return {
             id: user._id.toString(),
@@ -64,7 +64,7 @@ const handler = NextAuth({
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      if (account?.provider === "github" || account?.provider === "google") {
+      if (account?.provider === 'github' || account?.provider === 'google') {
         await connectToDatabase();
         const existingUser = await User.findOne({ email: profile?.email });
         if (!existingUser) {
@@ -98,7 +98,7 @@ const handler = NextAuth({
     },
   },
   pages: {
-    signIn: "/sign-in",
+    signIn: '/sign-in',
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

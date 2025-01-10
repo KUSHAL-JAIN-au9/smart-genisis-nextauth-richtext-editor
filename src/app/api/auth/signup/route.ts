@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/user";
-import bcrypt from "bcryptjs";
+import { NextResponse } from 'next/server';
+import connectToDatabase from '@/lib/mongodb';
+import User from '@/models/user';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   const { name, email, password, confirmPassword } = await request.json();
@@ -12,20 +12,20 @@ export async function POST(request: Request) {
   };
   if (!name || !email || !password || !confirmPassword) {
     return NextResponse.json(
-      { message: " All fields are required" },
+      { message: ' All fields are required' },
       { status: 400 }
     );
   }
 
   if (!isValidEmail(email)) {
     return NextResponse.json(
-      { message: "Invalid email format" },
+      { message: 'Invalid email format' },
       { status: 400 }
     );
   }
   if (confirmPassword !== password) {
     return NextResponse.json(
-      { message: "Password do not match" },
+      { message: 'Password do not match' },
       { status: 400 }
     );
   }
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message:
-          "Password must be at least 8 characters long, contain at least one uppercase letter, two alphabets, one number, and one special character.",
+          'Password must be at least 8 characters long, contain at least one uppercase letter, two alphabets, one number, and one special character.',
       },
       { status: 400 }
     );
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
-        { message: "User already exist" },
+        { message: 'User already exist' },
         { status: 400 }
       );
     }
@@ -57,11 +57,11 @@ export async function POST(request: Request) {
       password: hashedPassword,
     });
     await newUser.save();
-    return NextResponse.json({ message: "User created" }, { status: 201 });
+    return NextResponse.json({ message: 'User created' }, { status: 201 });
   } catch (error) {
-    console.log(error);
+    console.log({ error });
     return NextResponse.json(
-      { message: "Something went wrong" },
+      { message: 'Something went wrong' },
       { status: 500 }
     );
   }

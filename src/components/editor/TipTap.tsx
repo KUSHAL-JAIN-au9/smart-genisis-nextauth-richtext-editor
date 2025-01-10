@@ -12,6 +12,7 @@ const Tiptap = ({ onChange, content }: { onChange: (newContent: string) => void;
     };
     const editor = useEditor({
         extensions: [StarterKit, Underline],
+        content,
         editorProps: {
             attributes: {
                 class:
@@ -28,7 +29,7 @@ const Tiptap = ({ onChange, content }: { onChange: (newContent: string) => void;
     return (
         <div className="w-full px-4">
             <Toolbar editor={editor} content={content} />
-            <EditorContent style={{ whiteSpace: "pre-line" }} editor={editor} />
+            <EditorContent editor={editor} />
         </div>
     );
 };

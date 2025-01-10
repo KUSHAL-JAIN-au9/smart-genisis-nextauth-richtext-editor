@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 interface IUser extends Document {
   _id: string;
@@ -25,21 +25,11 @@ const UserSchema: Schema<IUser> = new mongoose.Schema(
     password: {
       type: String,
       required: false,
-      validate: {
-        validator: function (value: string) {
-          // Regular expression for password validation
-          const passwordRegex =
-            /^(?=.*[A-Z])(?=.*[a-zA-Z]{2,})(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-          return passwordRegex.test(value);
-        },
-        message: (props: { value: string }) =>
-          `${props.value} is not a valid password!`,
-      },
     },
     contents: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Content",
+        ref: 'Content',
       },
     ],
   },
@@ -47,6 +37,6 @@ const UserSchema: Schema<IUser> = new mongoose.Schema(
 );
 
 const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+  mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
 export default User;

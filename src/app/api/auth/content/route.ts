@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import connectToDatabase from "@/lib/mongodb";
-import Content from "@/models/content";
-import { getSession } from "next-auth/react";
-import User from "@/models/user";
+import { NextResponse } from 'next/server';
+import connectToDatabase from '@/lib/mongodb';
+import Content from '@/models/content';
+import { getSession } from 'next-auth/react';
+import User from '@/models/user';
 
 // POST: Create new content
 export async function POST(request: Request) {
@@ -13,21 +13,21 @@ export async function POST(request: Request) {
 
   if (!session) {
     return NextResponse.json(
-      { message: "You must be logged in to create content" },
+      { message: 'You must be logged in to create content' },
       { status: 401 }
     );
   }
   const { content } = await request.json();
   if (!content) {
     return NextResponse.json(
-      { message: "Content is required" },
+      { message: 'Content is required' },
       { status: 400 }
     );
   }
 
   // Fetch the user ID using the email from the session
   const userData = await User.findOne({ email: session?.user?.email });
-  console.log("content email", content, session, userData);
+  console.log('content email', content, session, userData);
 
   const newContent = new Content({ content, user: userData?._id });
   await newContent.save();
@@ -38,10 +38,10 @@ export async function POST(request: Request) {
   }
 
   // Populate the user object in the new content
-  await newContent.populate("user");
+  await newContent.populate('user');
 
   return NextResponse.json(
-    { message: "Note added sucessfully", data: newContent },
+    { message: 'Note added sucessfully', data: newContent },
     { status: 201 }
   );
 }
@@ -55,33 +55,26 @@ export async function GET(request: Request) {
 
   if (!session) {
     return NextResponse.json(
-      { message: "You must be logged in to view content" },
+      { message: 'You must be logged in to view content' },
       { status: 401 }
     );
   }
 
   // Fetch the user ID using the email from the session
   const user = await User.findOne({ email: session?.user?.email })
-    .populate("contents")
+    .populate('contents')
     .exec();
-  console.log("Fetching user data", user, !user, session);
+  console.log('Fetching user data', user, !user, session);
   if (!user) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
+    return NextResponse.json({ message: 'User not found' }, { status: 404 });
   }
 
   const contents = await Content.find({ user: user._id })
-    .populate("user")
+    .populate('user')
     .exec();
 
-  if (!contents?.length) {
-    return NextResponse.json(
-      { message: "No content found", data: [] },
-      { status: 404 }
-    );
-  }
-
   return NextResponse.json(
-    { message: "notes fetched sucessfully", data: contents },
+    { message: 'notes fetched sucessfully', data: contents },
     { status: 200 }
   );
 }
@@ -93,7 +86,7 @@ export async function PUT(request: Request) {
 
   if (!id || !content) {
     return NextResponse.json(
-      { message: "ID and content are required" },
+      { message: 'ID and content are required' },
       { status: 400 }
     );
   }
@@ -105,7 +98,7 @@ export async function PUT(request: Request) {
   );
 
   if (!updatedContent) {
-    return NextResponse.json({ message: "Content not found" }, { status: 404 });
+    return NextResponse.json({ message: 'Content not found' }, { status: 404 });
   }
 
   return NextResponse.json(updatedContent, { status: 200 });
